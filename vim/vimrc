@@ -25,6 +25,13 @@ Plugin 'tpope/vim-fugitive'
 "
 " Plugin to help switch between tmux panes when in vim
 Plugin 'christoomey/vim-tmux-navigator'
+"
+" Plugin for auto-pep8
+Plugin 'w0rp/ale'
+Plugin 'scrooloose/syntastic'
+
+" Plugin for markdown rendering
+Plugin 'JamshedVesuna/vim-markdown-preview'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -82,6 +89,8 @@ let mapleader="\<Space>"
     set nocompatible
     set spelllang=en_us
     set backspace=indent,eol,start
+    autocmd FileType python,sql,javascript,markdown
+        \ set colorcolumn=79
     "Pasting in Vin
     nnoremap <F2> :set invpaste paste?<CR>
     set pastetoggle=<F2>
@@ -110,6 +119,23 @@ autocmd FileType haskell,cabal,yaml,sh,sql,tex,markdown
     "Netrw
     let g:netrw_banner=0
     let g:netrw_liststyle=3
+    let g:netrw_browse_split=2
+    let g:netrw_winsize = 15
+
+    "Ale - Plugin for pep8 (copied from Jon Nalley - github username -
+    "jnalley)
+    let g:ale_lint_on_enter = 1
+    let g:ale_lint_on_text_changed = 1
+    let g:ale_lint_on_insert_leave = 1
+    let g:ale_lint_on_filetype_changed = 0
+    let g:ale_open_list = 0
+    let g:ale_sign_error = "✗"
+    let g:ale_sign_warning = "⚠"
+    let g:ale_completion_enabled = 0
+    " navigation
+    let g:ale_fixers = {'python': ['autopep8', 'black', 'isort']}
+    let g:ale_python_black_options = '--line-length 79'
+    let g:ale_sh_shfmt_options = '-i 2 -ci'
 
 "Mappings
     "Productivity
@@ -129,6 +155,7 @@ autocmd FileType haskell,cabal,yaml,sh,sql,tex,markdown
     nnoremap <leader>u <C-R>
     nnoremap <leader>v V`]
     nnoremap <silent> <leader>t :Explore<CR>
+    nnoremap <silent> <leader>T :Rexplore<CR>
     nnoremap <silent> <leader>o :noh<CR>
     nnoremap <silent> <leader>w :call TrimWhitespace()<CR>
     nnoremap <silent> <leader>c :call ToggleCursorLines()<CR>
@@ -177,6 +204,17 @@ autocmd FileType haskell,cabal,yaml,sh,sql,tex,markdown
     nnoremap <silent> <leader>gd :Gdiff<CR>
     nnoremap <silent> <leader>gp :Git push<CR>
 
+    "Ale
+    nnoremap <silent> <leader><F7> :<Plug>(ale_lint)
+    nnoremap <silent> <leader>ls :ALEDetail 
+    nmap <silent> <leader>ee <Plug>(ale_lint)
+    nmap <silent> <leader>ff <Plug>(ale_fix)
+
+    "Markdown Preview
+    let vim_markdown_preview_github=1
+    let vim_markdown_preview_browser='Google Chrome'
+    let vim_markdown_preview_hotkey='<silent> <leader>rh'
+
     "No arrow keys
     nnoremap   <up>   <nop>
     nnoremap  <down>  <nop>
@@ -213,4 +251,5 @@ autocmd FileType haskell,cabal,yaml,sh,sql,tex,markdown
         endif
     endfunction
 
-au FileType py set textwidth=79 
+au FileType py, md set textwidth=79 
+
